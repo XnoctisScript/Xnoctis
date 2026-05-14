@@ -10,12 +10,14 @@ local TSvc    = game:GetService("TextService")
 local IceLib = {}
 
 local THEMES = {
-        Default     = {bg=Color3.fromRGB(3,3,3),     topbar=Color3.fromRGB(6,6,6),    section=Color3.fromRGB(9,9,9),    element=Color3.fromRGB(14,14,14), accent=Color3.fromRGB(160,160,160),text=Color3.fromRGB(230,230,230), sub=Color3.fromRGB(110,110,110), stroke=Color3.fromRGB(28,28,28)},
+	Default  = {bg=Color3.fromRGB(3,3,3),     topbar=Color3.fromRGB(6,6,6),    section=Color3.fromRGB(9,9,9),    element=Color3.fromRGB(14,14,14), accent=Color3.fromRGB(160,160,160),text=Color3.fromRGB(230,230,230), sub=Color3.fromRGB(110,110,110), stroke=Color3.fromRGB(28,28,28)},
 	Crimson  = {bg=Color3.fromRGB(10,3,3),    topbar=Color3.fromRGB(14,5,5),   section=Color3.fromRGB(16,6,6),   element=Color3.fromRGB(22,10,10), accent=Color3.fromRGB(220,35,35),  text=Color3.fromRGB(240,220,220), sub=Color3.fromRGB(155,100,100), stroke=Color3.fromRGB(40,14,14)},
 	Ocean    = {bg=Color3.fromRGB(5,12,22),   topbar=Color3.fromRGB(7,16,30),  section=Color3.fromRGB(8,18,34),  element=Color3.fromRGB(12,24,44), accent=Color3.fromRGB(40,130,235), text=Color3.fromRGB(220,235,255), sub=Color3.fromRGB(100,140,190), stroke=Color3.fromRGB(15,35,65)},
 	Forest   = {bg=Color3.fromRGB(5,14,8),    topbar=Color3.fromRGB(7,18,10),  section=Color3.fromRGB(8,20,11),  element=Color3.fromRGB(11,25,14), accent=Color3.fromRGB(45,190,80),  text=Color3.fromRGB(215,240,220), sub=Color3.fromRGB(90,150,100),  stroke=Color3.fromRGB(15,45,20)},
 	Midnight = {bg=Color3.fromRGB(10,8,20),   topbar=Color3.fromRGB(14,11,28), section=Color3.fromRGB(15,12,30), element=Color3.fromRGB(20,16,38), accent=Color3.fromRGB(130,80,235), text=Color3.fromRGB(225,220,245), sub=Color3.fromRGB(120,100,170), stroke=Color3.fromRGB(35,25,65)},
-	Red      = {bg=Color3.fromRGB(8,8,8),     topbar=Color3.fromRGB(11,11,11), section=Color3.fromRGB(13,13,13), element=Color3.fromRGB(18,18,18), accent=Color3.fromRGB(180,25,25),  text=Color3.fromRGB(235,235,235), sub=Color3.fromRGB(130,130,130), stroke=Color3.fromRGB(35,35,35)},
+	Sunset   = {bg=Color3.fromRGB(18,8,3),    topbar=Color3.fromRGB(24,11,4),  section=Color3.fromRGB(26,12,5),  element=Color3.fromRGB(34,16,7),  accent=Color3.fromRGB(255,110,30), text=Color3.fromRGB(255,235,215), sub=Color3.fromRGB(180,130,90),  stroke=Color3.fromRGB(55,28,10)},
+	Rose     = {bg=Color3.fromRGB(28,12,22),  topbar=Color3.fromRGB(36,16,28), section=Color3.fromRGB(40,18,32), element=Color3.fromRGB(52,22,42), accent=Color3.fromRGB(255,180,220),text=Color3.fromRGB(255,235,248), sub=Color3.fromRGB(210,160,195), stroke=Color3.fromRGB(75,35,62)},
+
 }
 
 local function tw(o, d, p, s, e)
@@ -240,9 +242,7 @@ function IceLib.new(cfg)
 		return b
 	end
 
-	local xClose = isMobile and -44 or -36
-	local xMin   = isMobile and -86 or -70
-	local closeBtn = mkWBtn("×", xClose)
+	local xMin   = isMobile and -44 or -36
 	local minBtn   = mkWBtn("−", xMin)
 
 	local tabBar = mkI("Frame", {
@@ -302,12 +302,13 @@ function IceLib.new(cfg)
 			tbfix.Visible       = true
 			tw(main, 0.35, {Size = self._originalSize})
 			minBtn.Text = "−"
+			task.delay(0.36, function()
+				-- Force active tab content visible after restore
+				if self._activeTab then
+					self._activeTab.Visible = true
+				end
+			end)
 		end
-	end)
-
-	closeBtn.MouseButton1Click:Connect(function()
-		tw(main, 0.28, {Size = UDim2.new(0, W, 0, 0)})
-		task.delay(0.3, function() gui:Destroy() end)
 	end)
 
 	local notifySoundId = 3023237993
@@ -411,7 +412,8 @@ function IceLib.new(cfg)
 
 	function self:ThemeSection(tab)
 		local sec = tab:Section("Themes")
-		for name in pairs(THEMES) do
+		local order = {"Default","Crimson","Ocean","Forest","Midnight","Sunset","Rose"}
+		for _, name in ipairs(order) do
 			local n = name
 			sec:Button(n, function() self:SetTheme(n) end)
 		end
@@ -792,13 +794,14 @@ function IceLib.new(cfg)
 				local HH        = mob and 42 or 36
 				local con = mkI("Frame", {
 					Size             = UDim2.new(1, 0, 0, HH),
-					BackgroundColor3 = Color3.fromRGB(10, 10, 10),
+					BackgroundColor3 = win._t.element,
 					BorderSizePixel  = 0,
 					ClipsDescendants = true,
 					Parent           = sf,
 				})
 				mkC(con, 6)
 				local cs = mkS(con, win._t.stroke, 1)
+				ref(con, "BackgroundColor3", "element")
 				ref(cs, "Color", "stroke")
 				local hBtn = mkI("TextButton", {
 					Size                   = UDim2.new(1, 0, 0, HH),
@@ -873,7 +876,7 @@ function IceLib.new(cfg)
 				for _, opt in ipairs(options) do
 					local ob = mkI("TextButton", {
 						Size             = UDim2.new(1, 0, 0, mob and 34 or 28),
-						BackgroundColor3 = Color3.fromRGB(16, 16, 16),
+						BackgroundColor3 = win._t.element,
 						TextColor3       = win._t.text,
 						Text             = opt,
 						Font             = Enum.Font.GothamMedium,
@@ -884,9 +887,16 @@ function IceLib.new(cfg)
 						Parent           = inner,
 					})
 					mkC(ob, 5)
+					ref(ob, "BackgroundColor3", "element")
 					ref(ob, "TextColor3", "text")
-					ob.MouseEnter:Connect(function() tw(ob, 0.1, {BackgroundColor3 = Color3.fromRGB(24, 24, 24)}) end)
-					ob.MouseLeave:Connect(function() tw(ob, 0.1, {BackgroundColor3 = Color3.fromRGB(16, 16, 16)}) end)
+					ob.MouseEnter:Connect(function()
+						tw(ob, 0.1, {BackgroundColor3 = Color3.fromRGB(
+							math.min(win._t.element.R*255+10, 255),
+							math.min(win._t.element.G*255+10, 255),
+							math.min(win._t.element.B*255+10, 255)
+						)})
+					end)
+					ob.MouseLeave:Connect(function() tw(ob, 0.1, {BackgroundColor3 = win._t.element}) end)
 					ob.MouseButton1Click:Connect(function()
 						local m = UIS:GetMouseLocation()
 						ripple(ob, m.X, m.Y)
@@ -924,12 +934,13 @@ function IceLib.new(cfg)
 				local wr = mkI("Frame", {
 					Size             = UDim2.new(1, 0, 0, 0),
 					AutomaticSize    = Enum.AutomaticSize.Y,
-					BackgroundColor3 = Color3.fromRGB(10, 10, 10),
+					BackgroundColor3 = win._t.element,
 					BorderSizePixel  = 0,
 					Parent           = sf,
 				})
 				mkC(wr, 6)
 				local ws = mkS(wr, win._t.stroke, 1)
+				ref(wr, "BackgroundColor3", "element")
 				ref(ws, "Color", "stroke")
 				local wL = Instance.new("UIListLayout")
 				wL.Padding             = UDim.new(0, mob and 9 or 8)
@@ -961,7 +972,8 @@ function IceLib.new(cfg)
 					Parent           = pr,
 				})
 				mkC(pv, 8)
-				mkS(pv, win._t.stroke, 1)
+				local pvStroke = mkS(pv, win._t.stroke, 1)
+				ref(pvStroke, "Color", "stroke")
 				local hx = mkI("TextLabel", {
 					Size                   = UDim2.new(1, -(pvS+10), 0, mob and 24 or 22),
 					Position               = UDim2.new(0, pvS+10, 0, 0),
@@ -1661,7 +1673,6 @@ end
 
 -- ================ KEYBINDS (inline in Main) ================
 local keybindsInlineSec = main:Section("Keybinds")
-keybindsInlineSec:Label("Menu Toggle default: K")
 
 local selectedAction = "Teleport"
 local allKeys = {
@@ -1817,19 +1828,23 @@ exploitsSec:Toggle("Anti Bang", false, function(v)
 end)
 
 local exploitList = {
-	{ name = "Yeild",    subtitle = "Exploit script",  url = "https://raw.githubusercontent.com/Reelicss/STOPSKID/refs/heads/main/Yeild",  method = "HttpGet" },
-	{ name = "AK Admin", subtitle = "Admin commands",  url = "https://absent.wtf/AKADMIN.lua",                                             method = "HttpGet" },
+	{ name = "Yield",        subtitle = "Exploit script",      url = "https://raw.githubusercontent.com/Reelicss/STOPSKID/refs/heads/main/Yeild", method = "HttpGet" },
+	{ name = "AK Admin",     subtitle = "Admin commands",      url = "https://absent.wtf/AKADMIN.lua",                                        method = "HttpGet" },
+	{ name = "Novoline",     subtitle = "Novoline exploit",    url = "https://novoline.pro",                                                  method = "HttpGet" },
+	{ name = "Onyx",         subtitle = "Onyx exploit",        url = "https://onyxv2.lol/main.lua",                                          method = "HttpGet" },
+	{ name = "Stalkie UGC",  subtitle = "UGC script",          url = "https://raw.githubusercontent.com/Rootleak/roblox/refs/heads/main/main.lua", method = "HttpGet" },
 }
 
 local function makeExploitCard(data, isLast)
 	local mob  = UIS.TouchEnabled and not UIS.KeyboardEnabled
 	local card = Instance.new("Frame")
 	card.Size             = UDim2.new(1, 0, 0, mob and 58 or 50)
-	card.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+	card.BackgroundColor3 = win._t.element
 	card.BorderSizePixel  = 0
 	card.ClipsDescendants = false
 	card.Parent           = exploitsSec._sf
 	mkC(card, 6)
+	win._ref(card, "BackgroundColor3", "element")
 
 	if not isLast then
 		local divOuter = Instance.new("Frame")
@@ -1843,11 +1858,12 @@ local function makeExploitCard(data, isLast)
 		local divLine = Instance.new("Frame")
 		divLine.Size             = UDim2.new(1, 0, 0, 12)
 		divLine.Position         = UDim2.new(0, 0, 0, 0)
-		divLine.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+		divLine.BackgroundColor3 = win._t.stroke
 		divLine.BorderSizePixel  = 0
 		divLine.ZIndex           = 2
 		divLine.Parent           = divOuter
 		mkC(divLine, 6)
+		win._ref(divLine, "BackgroundColor3", "stroke")
 	end
 
 	local nameLbl = Instance.new("TextLabel")
@@ -1855,12 +1871,13 @@ local function makeExploitCard(data, isLast)
 	nameLbl.Size               = UDim2.new(1, -24, 1, 0)
 	nameLbl.Position           = UDim2.new(0, mob and 16 or 14, 0, 0)
 	nameLbl.BackgroundTransparency = 1
-	nameLbl.TextColor3         = Color3.fromRGB(210, 210, 210)
+	nameLbl.TextColor3         = win._t.text
 	nameLbl.TextXAlignment     = Enum.TextXAlignment.Left
 	nameLbl.Font               = Enum.Font.GothamMedium
 	nameLbl.TextSize           = mob and 14 or 13
 	nameLbl.ZIndex             = 2
 	nameLbl.Parent             = card
+	win._ref(nameLbl, "TextColor3", "text")
 
 	local click = Instance.new("TextButton")
 	click.Size                   = UDim2.new(1, 0, 1, 0)
@@ -1870,19 +1887,27 @@ local function makeExploitCard(data, isLast)
 	click.Parent                 = card
 
 	click.MouseEnter:Connect(function()
-		tw(card,    0.2, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)})
-		tw(nameLbl, 0.2, {TextColor3 = Color3.fromRGB(255, 255, 255)})
+		tw(card,    0.2, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+14,255),
+			math.min(win._t.element.G*255+14,255),
+			math.min(win._t.element.B*255+14,255)
+		)})
+		tw(nameLbl, 0.2, {TextColor3 = win._t.text})
 	end)
 	click.MouseLeave:Connect(function()
-		tw(card,    0.2, {BackgroundColor3 = Color3.fromRGB(12, 12, 12)})
-		tw(nameLbl, 0.2, {TextColor3 = Color3.fromRGB(210, 210, 210)})
+		tw(card,    0.2, {BackgroundColor3 = win._t.element})
+		tw(nameLbl, 0.2, {TextColor3 = win._t.text})
 	end)
 	click.MouseButton1Down:Connect(function()
-		tw(card,    0.08, {BackgroundColor3 = Color3.fromRGB(40, 40, 40)})
-		tw(nameLbl, 0.08, {TextColor3 = Color3.fromRGB(150, 150, 150)})
+		tw(card,    0.08, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+28,255),
+			math.min(win._t.element.G*255+28,255),
+			math.min(win._t.element.B*255+28,255)
+		)})
+		tw(nameLbl, 0.08, {TextColor3 = win._t.sub})
 	end)
 	click.MouseButton1Click:Connect(function()
-		tw(card, 0.2, {BackgroundColor3 = Color3.fromRGB(12, 12, 12)})
+		tw(card, 0.2, {BackgroundColor3 = win._t.element})
 		task.spawn(function()
 			loadstring(game:HttpGet(data.url))()
 		end)
@@ -1898,7 +1923,7 @@ local cam = workspace.CurrentCamera
 local function removeZoomLimit()
 	local lp = Players.LocalPlayer
 	pcall(function()
-		lp.CameraMaxZoomDistance = 1000
+		lp.CameraMaxZoomDistance = math.huge
 		lp.CameraMinZoomDistance = 0
 	end)
 end
@@ -1930,11 +1955,12 @@ local function makeGuiCard(data, isLast)
 	local mob  = UIS.TouchEnabled and not UIS.KeyboardEnabled
 	local card = Instance.new("Frame")
 	card.Size             = UDim2.new(1, 0, 0, mob and 58 or 50)
-	card.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+	card.BackgroundColor3 = win._t.element
 	card.BorderSizePixel  = 0
 	card.ClipsDescendants = false
 	card.Parent           = guisSec._sf
 	mkC2(card, 6)
+	win._ref(card, "BackgroundColor3", "element")
 
 	if not isLast then
 		local divOuter = Instance.new("Frame")
@@ -1948,11 +1974,12 @@ local function makeGuiCard(data, isLast)
 		local divLine = Instance.new("Frame")
 		divLine.Size             = UDim2.new(1, 0, 0, 12)
 		divLine.Position         = UDim2.new(0, 0, 0, 0)
-		divLine.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+		divLine.BackgroundColor3 = win._t.stroke
 		divLine.BorderSizePixel  = 0
 		divLine.ZIndex           = 2
 		divLine.Parent           = divOuter
 		mkC2(divLine, 6)
+		win._ref(divLine, "BackgroundColor3", "stroke")
 	end
 
 	local nameLbl = Instance.new("TextLabel")
@@ -1960,12 +1987,13 @@ local function makeGuiCard(data, isLast)
 	nameLbl.Size               = UDim2.new(1, -24, 1, 0)
 	nameLbl.Position           = UDim2.new(0, mob and 16 or 14, 0, 0)
 	nameLbl.BackgroundTransparency = 1
-	nameLbl.TextColor3         = Color3.fromRGB(210, 210, 210)
+	nameLbl.TextColor3         = win._t.text
 	nameLbl.TextXAlignment     = Enum.TextXAlignment.Left
 	nameLbl.Font               = Enum.Font.GothamMedium
 	nameLbl.TextSize           = mob and 14 or 13
 	nameLbl.ZIndex             = 2
 	nameLbl.Parent             = card
+	win._ref(nameLbl, "TextColor3", "text")
 
 	local click = Instance.new("TextButton")
 	click.Size                   = UDim2.new(1, 0, 1, 0)
@@ -1975,19 +2003,27 @@ local function makeGuiCard(data, isLast)
 	click.Parent                 = card
 
 	click.MouseEnter:Connect(function()
-		tw(card,    0.2, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)})
-		tw(nameLbl, 0.2, {TextColor3 = Color3.fromRGB(255, 255, 255)})
+		tw(card,    0.2, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+14,255),
+			math.min(win._t.element.G*255+14,255),
+			math.min(win._t.element.B*255+14,255)
+		)})
+		tw(nameLbl, 0.2, {TextColor3 = win._t.text})
 	end)
 	click.MouseLeave:Connect(function()
-		tw(card,    0.2, {BackgroundColor3 = Color3.fromRGB(12, 12, 12)})
-		tw(nameLbl, 0.2, {TextColor3 = Color3.fromRGB(210, 210, 210)})
+		tw(card,    0.2, {BackgroundColor3 = win._t.element})
+		tw(nameLbl, 0.2, {TextColor3 = win._t.text})
 	end)
 	click.MouseButton1Down:Connect(function()
-		tw(card,    0.08, {BackgroundColor3 = Color3.fromRGB(40, 40, 40)})
-		tw(nameLbl, 0.08, {TextColor3 = Color3.fromRGB(150, 150, 150)})
+		tw(card,    0.08, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+28,255),
+			math.min(win._t.element.G*255+28,255),
+			math.min(win._t.element.B*255+28,255)
+		)})
+		tw(nameLbl, 0.08, {TextColor3 = win._t.sub})
 	end)
 	click.MouseButton1Click:Connect(function()
-		tw(card, 0.2, {BackgroundColor3 = Color3.fromRGB(12, 12, 12)})
+		tw(card, 0.2, {BackgroundColor3 = win._t.element})
 		task.spawn(function()
 			if data.method == "HttpGetAsync" then
 				loadstring(game:HttpGetAsync(data.url))()
@@ -2010,13 +2046,14 @@ local function makeBaseplateRow(title, subtitle, url)
 	local mob = UIS.TouchEnabled and not UIS.KeyboardEnabled
 	local row = Instance.new("Frame")
 	row.Size                   = UDim2.new(1, 0, 0, mob and 80 or 68)
-	row.BackgroundColor3       = Color3.fromRGB(18, 18, 18)
-	row.BackgroundTransparency = 0.4
+	row.BackgroundColor3       = win._t.element
 	row.BorderSizePixel        = 0
 	row.ClipsDescendants       = true
 	row.Parent                 = baseplateSec._sf
 	mkC(row, 8)
-	mkS(row, Color3.fromRGB(35, 35, 35), 1)
+	local rowStroke = mkS(row, win._t.stroke, 1)
+	win._ref(row,       "BackgroundColor3", "element")
+	win._ref(rowStroke, "Color",            "stroke")
 
 	local titleLbl = Instance.new("TextLabel")
 	titleLbl.Text               = title
@@ -2028,6 +2065,7 @@ local function makeBaseplateRow(title, subtitle, url)
 	titleLbl.Font               = Enum.Font.GothamMedium
 	titleLbl.TextSize           = mob and 14 or 13
 	titleLbl.Parent             = row
+	win._ref(titleLbl, "TextColor3", "text")
 
 	local subLbl = Instance.new("TextLabel")
 	subLbl.Text               = subtitle
@@ -2039,6 +2077,7 @@ local function makeBaseplateRow(title, subtitle, url)
 	subLbl.Font               = Enum.Font.Gotham
 	subLbl.TextSize           = mob and 13 or 12
 	subLbl.Parent             = row
+	win._ref(subLbl, "TextColor3", "sub")
 
 	local click = Instance.new("TextButton")
 	click.Size                   = UDim2.new(1, 0, 1, 0)
@@ -2048,18 +2087,27 @@ local function makeBaseplateRow(title, subtitle, url)
 	click.Parent                 = row
 
 	click.MouseEnter:Connect(function()
-		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(32, 32, 32), BackgroundTransparency = 0})
-		tw(titleLbl, 0.15, {TextColor3 = Color3.fromRGB(255, 255, 255)})
+		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+14,255),
+			math.min(win._t.element.G*255+14,255),
+			math.min(win._t.element.B*255+14,255)
+		), BackgroundTransparency = 0})
+		tw(titleLbl, 0.15, {TextColor3 = win._t.text})
 	end)
 	click.MouseLeave:Connect(function()
-		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(18, 18, 18), BackgroundTransparency = 0.4})
+		tw(row, 0.15, {BackgroundColor3 = win._t.element, BackgroundTransparency = 0})
 		tw(titleLbl, 0.15, {TextColor3 = win._t.text})
 	end)
 	click.MouseButton1Down:Connect(function()
-		tw(row, 0.08, {BackgroundColor3 = Color3.fromRGB(45, 45, 45), BackgroundTransparency = 0})
+		tw(row, 0.08, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+28,255),
+			math.min(win._t.element.G*255+28,255),
+			math.min(win._t.element.B*255+28,255)
+		), BackgroundTransparency = 0})
 	end)
 	click.MouseButton1Click:Connect(function()
-		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(32, 32, 32), BackgroundTransparency = 0})
+		tw(row, 0.15, {BackgroundColor3 = win._t.element, BackgroundTransparency = 0})
+		win:Notify("BasePlate", title .. " baseplate applied", 3)
 		task.spawn(function()
 			loadstring(game:HttpGet(url))()
 		end)
@@ -2073,6 +2121,9 @@ makeBaseplateRow("Transparent", "Invisible baseplate",         "https://raw.gith
 baseplateSec:Label(" ")
 makeBaseplateRow("Sand",        "Sandy baseplate texture",     "https://raw.githubusercontent.com/Reelicss/STOPPLEEJ/refs/heads/main/3")
 baseplateSec:Label(" ")
+baseplateSec:Label(" ")
+makeBaseplateRow("Basalt",       "Volcanic basalt baseplate",          "https://raw.githubusercontent.com/Reelicss/STOPPLEEJ/refs/heads/main/5")
+baseplateSec:Label(" ")
 makeBaseplateRow("Reset",       "Reset baseplate to default",  "https://raw.githubusercontent.com/Reelicss/STOPPLEEJ/refs/heads/main/4")
 baseplateSec:Label(" ")
 
@@ -2084,13 +2135,14 @@ local function makeShadeRow(title, subtitle, url)
 	local mob = UIS.TouchEnabled and not UIS.KeyboardEnabled
 	local row = Instance.new("Frame")
 	row.Size                   = UDim2.new(1, 0, 0, mob and 80 or 68)
-	row.BackgroundColor3       = Color3.fromRGB(18, 18, 18)
-	row.BackgroundTransparency = 0.4
+	row.BackgroundColor3       = win._t.element
 	row.BorderSizePixel        = 0
 	row.ClipsDescendants       = true
 	row.Parent                 = shadeSec._sf
 	mkC(row, 8)
-	mkS(row, Color3.fromRGB(35, 35, 35), 1)
+	local rowStroke = mkS(row, win._t.stroke, 1)
+	win._ref(row,       "BackgroundColor3", "element")
+	win._ref(rowStroke, "Color",            "stroke")
 
 	local titleLbl = Instance.new("TextLabel")
 	titleLbl.Text               = title
@@ -2102,6 +2154,7 @@ local function makeShadeRow(title, subtitle, url)
 	titleLbl.Font               = Enum.Font.GothamMedium
 	titleLbl.TextSize           = mob and 14 or 13
 	titleLbl.Parent             = row
+	win._ref(titleLbl, "TextColor3", "text")
 
 	local subLbl = Instance.new("TextLabel")
 	subLbl.Text               = subtitle
@@ -2113,6 +2166,7 @@ local function makeShadeRow(title, subtitle, url)
 	subLbl.Font               = Enum.Font.Gotham
 	subLbl.TextSize           = mob and 13 or 12
 	subLbl.Parent             = row
+	win._ref(subLbl, "TextColor3", "sub")
 
 	local click = Instance.new("TextButton")
 	click.Size                   = UDim2.new(1, 0, 1, 0)
@@ -2122,18 +2176,27 @@ local function makeShadeRow(title, subtitle, url)
 	click.Parent                 = row
 
 	click.MouseEnter:Connect(function()
-		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(32, 32, 32), BackgroundTransparency = 0})
-		tw(titleLbl, 0.15, {TextColor3 = Color3.fromRGB(255, 255, 255)})
+		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+14,255),
+			math.min(win._t.element.G*255+14,255),
+			math.min(win._t.element.B*255+14,255)
+		), BackgroundTransparency = 0})
+		tw(titleLbl, 0.15, {TextColor3 = win._t.text})
 	end)
 	click.MouseLeave:Connect(function()
-		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(18, 18, 18), BackgroundTransparency = 0.4})
+		tw(row, 0.15, {BackgroundColor3 = win._t.element, BackgroundTransparency = 0})
 		tw(titleLbl, 0.15, {TextColor3 = win._t.text})
 	end)
 	click.MouseButton1Down:Connect(function()
-		tw(row, 0.08, {BackgroundColor3 = Color3.fromRGB(45, 45, 45), BackgroundTransparency = 0})
+		tw(row, 0.08, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+28,255),
+			math.min(win._t.element.G*255+28,255),
+			math.min(win._t.element.B*255+28,255)
+		), BackgroundTransparency = 0})
 	end)
 	click.MouseButton1Click:Connect(function()
-		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(32, 32, 32), BackgroundTransparency = 0})
+		tw(row, 0.15, {BackgroundColor3 = win._t.element, BackgroundTransparency = 0})
+		win:Notify("Shader", title .. " shader applied", 3)
 		task.spawn(function()
 			loadstring(game:HttpGet(url))()
 		end)
@@ -2149,6 +2212,106 @@ makeShadeRow("Space", "Entering different dimensions",             "https://raw.
 shadeSec:Label(" ")
 makeShadeRow("Reset", "Need to reset everytime you use the shader","https://raw.githubusercontent.com/Reelicss/PLSVRO/refs/heads/main/4")
 shadeSec:Label(" ")
+
+-- ================ MISC TAB ================
+local misc    = win:Tab("Misc")
+local miscSec = misc:Section("")
+
+local function makeMiscRow(title, subtitle, cb)
+	local mob = UIS.TouchEnabled and not UIS.KeyboardEnabled
+	local row = Instance.new("Frame")
+	row.Size                   = UDim2.new(1, 0, 0, mob and 80 or 68)
+	row.BackgroundColor3       = win._t.element
+	row.BorderSizePixel        = 0
+	row.ClipsDescendants       = true
+	row.Parent                 = miscSec._sf
+	mkC(row, 8)
+	local rowStroke = mkS(row, win._t.stroke, 1)
+	win._ref(row,       "BackgroundColor3", "element")
+	win._ref(rowStroke, "Color",            "stroke")
+
+	local titleLbl = Instance.new("TextLabel")
+	titleLbl.Text                   = title
+	titleLbl.Size                   = UDim2.new(1, -24, 0, mob and 28 or 24)
+	titleLbl.Position               = UDim2.new(0, 14, 0, mob and 12 or 10)
+	titleLbl.BackgroundTransparency = 1
+	titleLbl.TextColor3             = win._t.text
+	titleLbl.TextXAlignment         = Enum.TextXAlignment.Left
+	titleLbl.Font                   = Enum.Font.GothamMedium
+	titleLbl.TextSize               = mob and 14 or 13
+	titleLbl.Parent                 = row
+	win._ref(titleLbl, "TextColor3", "text")
+
+	local subLbl = Instance.new("TextLabel")
+	subLbl.Text                   = subtitle
+	subLbl.Size                   = UDim2.new(1, -24, 0, mob and 20 or 18)
+	subLbl.Position               = UDim2.new(0, 14, 0, mob and 42 or 36)
+	subLbl.BackgroundTransparency = 1
+	subLbl.TextColor3             = win._t.sub
+	subLbl.TextXAlignment         = Enum.TextXAlignment.Left
+	subLbl.Font                   = Enum.Font.Gotham
+	subLbl.TextSize               = mob and 13 or 12
+	subLbl.Parent                 = row
+	win._ref(subLbl, "TextColor3", "sub")
+
+	local click = Instance.new("TextButton")
+	click.Size                   = UDim2.new(1, 0, 1, 0)
+	click.BackgroundTransparency = 1
+	click.Text                   = ""
+	click.ZIndex                 = 3
+	click.Parent                 = row
+
+	click.MouseEnter:Connect(function()
+		tw(row, 0.15, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+14,255),
+			math.min(win._t.element.G*255+14,255),
+			math.min(win._t.element.B*255+14,255)
+		), BackgroundTransparency = 0})
+		tw(titleLbl, 0.15, {TextColor3 = win._t.text})
+	end)
+	click.MouseLeave:Connect(function()
+		tw(row,      0.15, {BackgroundColor3 = win._t.element, BackgroundTransparency = 0})
+		tw(titleLbl, 0.15, {TextColor3 = win._t.text})
+	end)
+	click.MouseButton1Down:Connect(function()
+		tw(row, 0.08, {BackgroundColor3 = Color3.fromRGB(
+			math.min(win._t.element.R*255+28,255),
+			math.min(win._t.element.G*255+28,255),
+			math.min(win._t.element.B*255+28,255)
+		), BackgroundTransparency = 0})
+	end)
+	click.MouseButton1Click:Connect(function()
+		tw(row, 0.15, {BackgroundColor3 = win._t.element, BackgroundTransparency = 0})
+		win:Notify("Misc", title .. " activated", 3)
+		task.spawn(cb)
+	end)
+end
+
+miscSec:Label(" ")
+makeMiscRow("Tree House",  "Creates a tree house",  function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Reelicss/TreeHouse/refs/heads/main/message%20(1).txt"))()
+end)
+miscSec:Label(" ")
+makeMiscRow("McDonald's",  "Creates a hotel and McDonald's — the full experience", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Reelicss/TreeHouse/refs/heads/main/Peaceful.lua"))()
+end)
+miscSec:Label(" ")
+makeMiscRow("Reset",       "May break re-anim — rejoin to fix",  function()
+	local Workspace = game:GetService("Workspace")
+	local Players = game:GetService("Players")
+
+	local playerNames = {}
+	for _, player in Players:GetPlayers() do
+		playerNames[player.Name] = true
+	end
+
+	for _, item in Workspace:GetChildren() do
+		if item:IsA("Model") and not playerNames[item.Name] then
+			item:Destroy()
+		end
+	end
+end)
+miscSec:Label(" ")
 
 -- ================ ANIM TAB ================
 local animTab = win:Tab("Anim")
@@ -2714,14 +2877,21 @@ end
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Reelicss/STOPSKID/refs/heads/main/Pop%20Up"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Reelicss/GETAJOB/refs/heads/main/1"))()
 
--- ================ MISC TAB ================
-local misc = win:Tab("Misc")
-local tp   = misc:Section("Teleport")
-tp:Dropdown("Location", {"Spawn","Island","Cave"}, function(v) end)
-tp:Input("Custom coords x,y,z", function(t) end)
-
 -- ================ SETTINGS TAB ================
 local settings = win:Tab("Settings")
 win:ThemeSection(settings)
 local accentSec = settings:Section("Accent")
 accentSec:ColorPicker("Color", Color3.fromRGB(180, 25, 25), function(col) end)
+
+-- Infinite Zoom Fix
+task.spawn(function()
+    local player = game:GetService("Players").LocalPlayer
+    while true do
+        pcall(function()
+            player.CameraMaxZoomDistance = math.huge
+            player.CameraMinZoomDistance = 0
+        end)
+        task.wait(1)
+    end
+end)
+
