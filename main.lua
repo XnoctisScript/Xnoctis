@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://skidnet.lol/auth/script/YTyW6DB7cD"))()
+loadstring(game:HttpGet("https://skidnet.lol/auth/script/u1eFqxgDVh"))()
