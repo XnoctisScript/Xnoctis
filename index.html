@@ -66,14 +66,8 @@
     flex-shrink: 0;
   }
 
-  .script-code {
-    font-size: 15px;
-    color: #c8c8c8;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1;
-  }
+  .script-code { font-size: 15px; color: #c8c8c8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+  .script-url { color: #444; }
 
   .copy-btn {
     background: transparent;
@@ -105,7 +99,7 @@
   <div class="script-box">
     <div class="script-text">
       <span class="prompt-icon">&gt;_</span>
-      <span class="script-code">loadstring(game:HttpGet("https://xnoctis.in", true))()</span>
+      <span class="script-code">loadstring(game:HttpGet("<span class="script-url">https://xnoctis.in</span>", true))()</span>
     </div>
     <button class="copy-btn" id="copy-btn" onclick="copyScript()">COPY</button>
   </div>
