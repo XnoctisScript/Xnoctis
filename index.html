@@ -1,22 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Xnoctis</title>
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-    }
-  </style>
-</head>
-<body>
-  <h1>XNOCTIS</h1>
-</body>
-</html>
+if not game:IsLoaded() then 
+ game.Loaded:Wait() end 
+getgenv().SCRIPT_KEY = "KEYLESS"
+loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/2e51b02c3a43bab9483a3847eb5b11898115d64f57d4203ac2c94a66cc04945f/download"))()
