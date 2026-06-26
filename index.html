@@ -1,22 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Xnoctis</title>
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Script Hub</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e8e8e8;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  canvas#bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .script-box {
+    background: rgba(30,30,30,0.92);
+    border: 1px solid #444;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 22px;
+    gap: 16px;
+    backdrop-filter: blur(8px);
+  }
+
+  .script-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .prompt-icon {
+    color: #ffffff;
+    font-size: 18px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .script-code {
+    font-size: 15px;
+    color: #c8c8c8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #aaa;
+    padding: 9px 24px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    border-radius: 5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .copy-btn:hover { }
+  .copy-btn.copied { color: #aaa; border-color: #444; }
+
+
+</style>
 </head>
 <body>
-  <h1>XNOCTIS</h1>
+
+<canvas id="bg"></canvas>
+
+<div class="container">
+  <div class="script-box">
+    <div class="script-text">
+      <span class="prompt-icon">&gt;_</span>
+      <span class="script-code">loadstring(game:HttpGet("https://xnoctis.in/main.lua", true))()</span>
+    </div>
+    <button class="copy-btn" id="copy-btn" onclick="copyScript()">COPY</button>
+  </div>
+
+
+</div>
+
+<script>
+const SCRIPT = `loadstring(game:HttpGet("https://xnoctis.in/main.lua", true))()`;
+
+function copyScript() {
+  const btn = document.getElementById('copy-btn');
+
+  function markCopied() {
+    btn.textContent = 'COPIED';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2000);
+  }
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(SCRIPT).then(markCopied).catch(() => fallbackCopy());
+  } else {
+    fallbackCopy();
+  }
+
+  function fallbackCopy() {
+    const ta = document.createElement('textarea');
+    ta.value = SCRIPT;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    markCopied();
+  }
+}
+
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let W, H, mouse = {x:0,y:0}, target = {x:0,y:0};
+let grid = [], COLS, ROWS;
+
+const CHARS = '01アイウエオカキクケコサシスセソ#$%<>{}[]ナニヌネノハヒフヘホ'.split('');
+
+function buildGrid() {
+  const cell = Math.max(22, Math.min(W,H)/34);
+  COLS = Math.ceil(W/cell)+1;
+  ROWS = Math.ceil(H/cell)+1;
+  grid = [];
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      grid.push({
+        c,r,
+        char: CHARS[Math.floor(Math.random()*CHARS.length)],
+        timer: Math.random()*80,
+        interval: 35+Math.random()*100,
+        base: 0.03+Math.random()*0.07
+      });
+    }
+  }
+}
+
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  buildGrid();
+}
+resize();
+window.addEventListener('resize', resize);
+window.addEventListener('mousemove', e=>{ target.x=e.clientX; target.y=e.clientY; });
+window.addEventListener('touchmove', e=>{ target.x=e.touches[0].clientX; target.y=e.touches[0].clientY; },{passive:true});
+
+function draw(){
+  mouse.x += (target.x - mouse.x)*0.055;
+  mouse.y += (target.y - mouse.y)*0.055;
+
+  ctx.clearRect(0,0,W,H);
+
+  const mx = mouse.x/W, my = mouse.y/H;
+
+  const ggrad = ctx.createRadialGradient(mouse.x,mouse.y,0,mouse.x,mouse.y,Math.max(W,H)*0.5);
+  ggrad.addColorStop(0,   'rgba(255,255,255,0.07)');
+  ggrad.addColorStop(0.35,'rgba(200,200,200,0.03)');
+  ggrad.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle=ggrad; ctx.fillRect(0,0,W,H);
+
+  const ox=W*0.5+(0.5-mx)*W*0.35, oy=H*0.5+(0.5-my)*H*0.35;
+  const porb = ctx.createRadialGradient(ox,oy,0,ox,oy,Math.max(W,H)*0.45);
+  porb.addColorStop(0,  'rgba(160,160,160,0.05)');
+  porb.addColorStop(0.5,'rgba(100,100,100,0.02)');
+  porb.addColorStop(1,  'rgba(0,0,0,0)');
+  ctx.fillStyle=porb; ctx.fillRect(0,0,W,H);
+
+  const cellW=W/(COLS-1), cellH=H/(ROWS-1);
+  const fs=Math.max(9,Math.min(cellW,cellH)*0.52);
+  ctx.font=`${fs}px 'Courier New', monospace`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+
+  for(const cell of grid){
+    cell.timer++;
+    if(cell.timer>cell.interval){
+      cell.char=CHARS[Math.floor(Math.random()*CHARS.length)];
+      cell.timer=0; cell.interval=35+Math.random()*100;
+    }
+    const px=(cell.c+0.5)*cellW, py=(cell.r+0.5)*cellH;
+    const dx=(px/W)-mx, dy=(py/H)-my;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    const prox=Math.max(0,1-dist/0.32);
+    const alpha=cell.base+prox*0.65;
+    const ch=Math.round(140+prox*115);
+    ctx.fillStyle=`rgba(${ch},${ch},${ch},${alpha})`;
+    ctx.fillText(cell.char,px,py);
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
 </body>
 </html>
