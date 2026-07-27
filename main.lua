@@ -1,2 +1,2 @@
-lp_key = "05182c6e3178517a7ff9000b"
+lp_key = "ee1e3bd59bf8ee34d9e8e4f3"
 loadstring(game:HttpGet("https://luaprot.net/api/v2/loaders/get/40133528332003734197"))()
