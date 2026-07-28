@@ -98,18 +98,204 @@
   .skip-btn:active {
     transform: translateY(0);
   }
+
+  /* Top-Left Official Media Player Panel */
+  .media-top-panel {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(12, 12, 12, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 10px;
+    border-radius: 12px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+    user-select: none;
+    font-family: 'JetBrains Mono', monospace;
+    width: 340px;
+  }
+
+  .media-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 4px;
+    font-size: 11px;
+    color: #ffffff;
+  }
+
+  .media-logo-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 210px;
+  }
+
+  .media-nav-btns {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .media-nav-btn {
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 3px 5px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .media-nav-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .media-frame-container {
+    border-radius: 8px;
+    overflow: hidden;
+    height: 180px;
+  }
+  /* Center Visible Link Container */
+  .center-link-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(15, 15, 15, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 8px 12px;
+    border-radius: 50px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 255, 255, 0.1);
+    user-select: none;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .visible-link-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 10px 18px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .visible-link-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: scale(1.02);
+  }
+
+  .visible-link-card.copied {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #ffffff;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+  }
+
+  .link-url-text {
+    font-size: 13px;
+    color: #ffffff;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+  }
+
+  .copy-icon-btn {
+    background: none;
+    border: none;
+    color: #aaaaaa;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+  }
+
+  .visible-link-card:hover .copy-icon-btn {
+    color: #ffffff;
+  }
+
+  .open-link-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.25s ease;
+  }
+
+  .open-link-icon-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: scale(1.1);
+  }
 </style>
 </head>
 <body>
 
 <canvas id="bg"></canvas>
 
+<!-- Centered Visible Link Card -->
+<div class="center-link-container">
+  <div class="visible-link-card" id="link-card" onclick="copyVisibleLink()" title="Click to Copy Link">
+    <i class="fa-solid fa-link" style="color: #ffffff;"></i>
+    <span class="link-url-text" id="url-text">https://luaprot.net/ad/04358f4d</span>
+    <button class="copy-icon-btn" id="copy-btn-badge" title="Copy URL">
+      <i class="fa-regular fa-copy" id="copy-icon"></i>
+    </button>
+  </div>
+  <a href="https://luaprot.net/ad/04358f4d" target="_blank" rel="noopener noreferrer" class="open-link-icon-btn" title="Open Link in New Tab">
+    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+  </a>
+</div>
+<div class="media-top-panel">
+  <div class="media-header">
+    <div class="media-logo-title">
+      <i class="fa-brands fa-spotify" id="player-icon-brand" style="color: #ffffff; font-size: 15px;"></i>
+      <span id="media-track-badge">1/4: Gigi Perez - Sailor Song</span>
+    </div>
+    <div class="media-nav-btns">
+      <button class="media-nav-btn" onclick="prevSong()" title="Previous Song"><i class="fa-solid fa-backward-step"></i></button>
+      <button class="media-nav-btn" onclick="nextSong()" title="Next Song"><i class="fa-solid fa-forward-step"></i></button>
+      <button class="media-nav-btn" onclick="promptCustomSpotifyUrl()" title="Add Custom Spotify Link"><i class="fa-solid fa-plus"></i></button>
+    </div>
+  </div>
+  <div class="media-frame-container" style="height: 152px;">
+    <iframe id="main-media-iframe" src="https://open.spotify.com/embed/track/21IYMdzTrzSe191Cy5eMap?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:8px;"></iframe>
+  </div>
+</div>
+
 <!-- Skip Control Layer -->
 <div class="ui-layer">
-  <div class="anim-badge" id="anim-name">1/4: 3D MATRIX WAVE GRID</div>
+  <div class="anim-badge" id="anim-name">1/10: HOLOGRAPHIC CYBER WAVE MATRIX</div>
   <button class="skip-btn" id="skip-btn" onclick="nextAnimation()">
     <span>SKIP</span>
-    <i class="fa-solid fa-forward"></i>
+    <i class="fa-forward fa-solid"></i>
   </button>
 </div>
 
@@ -123,10 +309,16 @@ let time = 0;
 
 let currentAnimIndex = 0;
 const animNames = [
-  "1/4: 3D MATRIX WAVE GRID",
-  "2/4: WARP STARFIELD",
-  "3/4: CYBER WIREFRAME GRID",
-  "4/4: DIGITAL MATRIX STREAM"
+  "1/10: HOLOGRAPHIC CYBER WAVE MATRIX",
+  "2/10: WARP STARFIELD",
+  "3/10: CYBER WIREFRAME GRID",
+  "4/10: VORTEX RING SWARM",
+  "5/10: TUNNEL SPEEDWAY",
+  "6/10: QUANTUM RADAR GRID",
+  "7/10: HYPER CUBE ROTATION",
+  "8/10: 3D CYBER TORUS KNOT MATRIX",
+  "9/10: MOLECULAR ATOM NETWORK",
+  "10/10: GRAVITATIONAL LENS GRID"
 ];
 
 function resize() {
@@ -147,47 +339,130 @@ window.addEventListener('mouseleave', () => {
 });
 
 /* ==========================================
-   ANIMATION 1: 3D MATRIX WAVE GRID
+   FLAGSHIP ANIMATION 1: HOLOGRAPHIC CYBER WAVE MATRIX
    ========================================== */
-function drawMatrixWave() {
+let waveNodes = [];
+let waveCols = 0;
+let waveRows = 0;
+
+function initCyberWaveMatrix() {
+  waveNodes = [];
+  const spacing = 28;
+  waveCols = Math.floor(W / spacing) + 3;
+  waveRows = Math.floor(H / spacing) + 3;
+  
+  for (let r = 0; r < waveRows; r++) {
+    for (let c = 0; c < waveCols; c++) {
+      waveNodes.push({
+        gx: c,
+        gy: r,
+        baseX: (c - 1) * spacing,
+        baseY: (r - 1) * spacing
+      });
+    }
+  }
+}
+
+function drawCyberWaveMatrix() {
   const cx = W / 2;
   const cy = H / 2;
-  const cols = 42;
-  const rows = 30;
-  const spacingX = W * 0.035;
-  const spacingY = H * 0.03;
+  const mxShift = mouse.x > 0 ? (mouse.x - cx) * 0.05 : 0;
+  const myShift = mouse.y > 0 ? (mouse.y - cy) * 0.05 : 0;
 
-  const mx = (mouse.x - cx) / cx;
-  const my = (mouse.y - cy) / cy;
+  // Soft cursor halo spotlight
+  if (mouse.x > 0 && mouse.y > 0) {
+    const halo = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 250);
+    halo.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+    halo.addColorStop(0.35, 'rgba(255, 255, 255, 0.04)');
+    halo.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = halo;
+    ctx.fillRect(0, 0, W, H);
+  }
 
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const gridX = (c - cols / 2) * spacingX;
-      const gridY = (r - rows / 2) * spacingY;
-      const distFromCenter = Math.sqrt(gridX * gridX + gridY * gridY);
+  // Precompute projected node positions with fluid 3D wave mechanics
+  const projected = new Array(waveNodes.length);
+  for (let i = 0; i < waveNodes.length; i++) {
+    const n = waveNodes[i];
+    const dx = mouse.x > 0 ? mouse.x - n.baseX : 9999;
+    const dy = mouse.y > 0 ? mouse.y - n.baseY : 9999;
+    const distToMouse = Math.sqrt(dx * dx + dy * dy);
 
-      const wave = Math.sin(distFromCenter * 0.008 - time * 1.8) * 18 +
-                   Math.cos((gridX * 0.01) + time) * 8;
+    // Multi-frequency wave oscillation
+    const w1 = Math.sin(n.baseX * 0.008 + time * 2.2);
+    const w2 = Math.cos(n.baseY * 0.008 + time * 1.6);
+    const w3 = Math.sin((n.baseX * 0.005 + n.baseY * 0.005) + time * 2.8);
+    
+    let zOffset = (w1 + w2 + w3) * 16;
 
-      const perspectiveScale = 1 + (gridY * 0.0005);
-      const projX = cx + gridX * perspectiveScale + mx * 30;
-      const projY = cy + (gridY + wave) * perspectiveScale + my * 30;
+    // Interactive mouse ripple force field
+    if (distToMouse < 220) {
+      const force = (1 - distToMouse / 220);
+      zOffset += Math.sin(distToMouse * 0.06 - time * 6) * force * 40;
+    }
 
-      const edgeAlpha = Math.max(0, 1 - (distFromCenter / (W * 0.55)));
-      if (edgeAlpha <= 0) continue;
+    const px = n.baseX + mxShift + (zOffset * 0.18);
+    const py = n.baseY + myShift + (zOffset * 0.28);
 
-      const alpha = (0.05 + Math.sin(time + distFromCenter * 0.01) * 0.04) * edgeAlpha;
-      if (alpha <= 0.005) continue;
+    projected[i] = { x: px, y: py, z: zOffset, dist: distToMouse };
+  }
 
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha + 0.05})`;
+  // Render glowing nodes
+  for (let i = 0; i < projected.length; i++) {
+    const p = projected[i];
+    const alpha = Math.min(0.95, Math.max(0.12, 0.25 + (p.z / 60) + (p.dist < 180 ? (1 - p.dist / 180) * 0.5 : 0)));
+    const radius = Math.max(0.8, 1.3 + (p.z / 30));
 
-      if ((c + r) % 3 === 0) {
-        const s = 3 * perspectiveScale;
-        ctx.fillRect(projX - s / 2, projY - 0.5, s, 1);
-        ctx.fillRect(projX - 0.5, projY - s / 2, 1, s);
-      } else {
-        const size = Math.max(1, 2 * perspectiveScale);
-        ctx.fillRect(projX - size / 2, projY - size / 2, size, size);
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Beam link to mouse cursor
+    if (p.dist < 160) {
+      const bAlpha = (1 - p.dist / 160) * 0.35;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${bAlpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+    }
+  }
+
+  // Render 3D Wireframe Grid mesh lines
+  ctx.lineWidth = 0.55;
+  for (let r = 0; r < waveRows; r++) {
+    for (let c = 0; c < waveCols; c++) {
+      const idx = r * waveCols + c;
+      const curr = projected[idx];
+      if (!curr) continue;
+
+      // Horizontal connection to right neighbor
+      if (c + 1 < waveCols) {
+        const right = projected[idx + 1];
+        if (right) {
+          const avgDist = (curr.dist + right.dist) * 0.5;
+          const lineAlpha = Math.min(0.45, 0.08 + (curr.z + right.z + 40) / 300 + (avgDist < 180 ? (1 - avgDist / 180) * 0.32 : 0));
+          ctx.strokeStyle = `rgba(255, 255, 255, ${lineAlpha})`;
+          ctx.beginPath();
+          ctx.moveTo(curr.x, curr.y);
+          ctx.lineTo(right.x, right.y);
+          ctx.stroke();
+        }
+      }
+
+      // Vertical connection to bottom neighbor
+      if (r + 1 < waveRows) {
+        const down = projected[idx + waveCols];
+        if (down) {
+          const avgDist = (curr.dist + down.dist) * 0.5;
+          const lineAlpha = Math.min(0.45, 0.08 + (curr.z + down.z + 40) / 300 + (avgDist < 180 ? (1 - avgDist / 180) * 0.32 : 0));
+          ctx.strokeStyle = `rgba(255, 255, 255, ${lineAlpha})`;
+          ctx.beginPath();
+          ctx.moveTo(curr.x, curr.y);
+          ctx.lineTo(down.x, down.y);
+          ctx.stroke();
+        }
       }
     }
   }
@@ -287,61 +562,383 @@ function drawCyberWireframeGrid() {
 }
 
 /* ==========================================
-   ANIMATION 4: DIGITAL MATRIX STREAM
+   ANIMATION 4: VORTEX RING SWARM
    ========================================== */
-let matrixCols = [];
-const MATRIX_CHARS = '01アイウエオカキクケコサシスセソXNOCTIS'.split('');
+let vortexParticles = [];
+function initVortexRingSwarm() {
+  vortexParticles = [];
+  const rings = 8;
+  const perRing = 32;
+  for (let r = 1; r <= rings; r++) {
+    for (let i = 0; i < perRing; i++) {
+      vortexParticles.push({
+        ring: r,
+        angle: (i / perRing) * Math.PI * 2,
+        speed: (0.015 / r) * (r % 2 === 0 ? 1 : -1),
+        radius: r * 45,
+        size: Math.random() * 1.5 + 1
+      });
+    }
+  }
+}
 
-function initMatrixStream() {
-  matrixCols = [];
-  const colSize = 24;
-  const cols = Math.floor(W / colSize);
-  for (let i = 0; i < cols; i++) {
-    matrixCols.push({
-      x: i * colSize,
-      y: Math.random() * -H,
-      speed: Math.random() * 3 + 2,
-      chars: Array.from({length: 20}, () => MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)])
+function drawVortexRingSwarm() {
+  const cx = W / 2 + (mouse.x > 0 ? (mouse.x - W / 2) * 0.15 : 0);
+  const cy = H / 2 + (mouse.y > 0 ? (mouse.y - H / 2) * 0.15 : 0);
+
+  for (let i = 0; i < vortexParticles.length; i++) {
+    const p = vortexParticles[i];
+    p.angle += p.speed;
+
+    const x = cx + Math.cos(p.angle) * p.radius;
+    const y = cy + Math.sin(p.angle) * (p.radius * 0.55);
+
+    const dist = Math.sqrt((mouse.x - x) ** 2 + (mouse.y - y) ** 2);
+    const alpha = 0.1 + (1 - p.ring / 9) * 0.4 + (dist < 150 ? (1 - dist / 150) * 0.5 : 0);
+
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* ==========================================
+   ANIMATION 5: TUNNEL SPEEDWAY
+   ========================================== */
+function drawTunnelSpeedway() {
+  const cx = W / 2 + (mouse.x > 0 ? (mouse.x - W / 2) * 0.25 : 0);
+  const cy = H / 2 + (mouse.y > 0 ? (mouse.y - H / 2) * 0.25 : 0);
+  const ringCount = 14;
+
+  for (let i = 0; i < ringCount; i++) {
+    const size = ((i * 50 + time * 60) % (ringCount * 50));
+    const alpha = (size / (ringCount * 50)) * (1 - size / (ringCount * 50)) * 1.2;
+
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.lineWidth = 1.2;
+
+    ctx.beginPath();
+    const sides = 8;
+    for (let s = 0; s < sides; s++) {
+      const a = (s / sides) * Math.PI * 2;
+      const px = cx + Math.cos(a) * size * 1.6;
+      const py = cy + Math.sin(a) * size;
+      if (s === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+}
+
+/* ==========================================
+   ANIMATION 6: QUANTUM RADAR GRID
+   ========================================== */
+let radarAngle = 0;
+function drawQuantumRadarGrid() {
+  const cx = W / 2;
+  const cy = H / 2;
+  const radius = Math.min(W, H) * 0.4;
+  radarAngle += 0.02;
+
+  for (let r = 1; r <= 4; r++) {
+    ctx.strokeStyle = `rgba(255, 255, 255, 0.06)`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, (radius / 4) * r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(cx - radius, cy); ctx.lineTo(cx + radius, cy);
+  ctx.moveTo(cx, cy - radius); ctx.lineTo(cx, cy + radius);
+  ctx.stroke();
+
+  const scanX = cx + Math.cos(radarAngle) * radius;
+  const scanY = cy + Math.sin(radarAngle) * radius;
+
+  const grad = ctx.createLinearGradient(cx, cy, scanX, scanY);
+  grad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+  grad.addColorStop(1, 'rgba(255, 255, 255, 0.02)');
+
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(scanX, scanY);
+  ctx.stroke();
+
+  if (mouse.x > 0 && mouse.y > 0) {
+    ctx.strokeStyle = `rgba(255, 255, 255, 0.25)`;
+    ctx.beginPath();
+    ctx.arc(mouse.x, mouse.y, 60, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
+/* ==========================================
+   ANIMATION 7: HYPER CUBE ROTATION
+   ========================================== */
+function drawHyperCubeRotation() {
+  const cx = W / 2;
+  const cy = H / 2;
+  const mx = mouse.x > 0 ? (mouse.x - cx) * 0.003 : 0;
+  const my = mouse.y > 0 ? (mouse.y - cy) * 0.003 : 0;
+
+  const rx = time * 0.8 + my;
+  const ry = time * 1.2 + mx;
+
+  const size = Math.min(W, H) * 0.2;
+  const vertices = [
+    [-1,-1,-1], [1,-1,-1], [1,1,-1], [-1,1,-1],
+    [-1,-1, 1], [1,-1, 1], [1,1, 1], [-1,1, 1]
+  ];
+
+  const projected = vertices.map(v => {
+    let x = v[0] * size;
+    let y = v[1] * size;
+    let z = v[2] * size;
+
+    let x1 = x * Math.cos(ry) + z * Math.sin(ry);
+    let z1 = -x * Math.sin(ry) + z * Math.cos(ry);
+    let y2 = y * Math.cos(rx) - z1 * Math.sin(rx);
+    let z2 = y * Math.sin(rx) + z1 * Math.cos(rx);
+
+    const fov = 400;
+    const scale = fov / (fov + z2);
+    return [cx + x1 * scale, cy + y2 * scale];
+  });
+
+  const edges = [
+    [0,1],[1,2],[2,3],[3,0],
+    [4,5],[5,6],[6,7],[7,4],
+    [0,4],[1,5],[2,6],[3,7]
+  ];
+
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+  ctx.lineWidth = 1.5;
+
+  edges.forEach(e => {
+    ctx.beginPath();
+    ctx.moveTo(projected[e[0]][0], projected[e[0]][1]);
+    ctx.lineTo(projected[e[1]][0], projected[e[1]][1]);
+    ctx.stroke();
+  });
+}
+
+/* ==========================================
+   ANIMATION 8: 3D CYBER TORUS KNOT MATRIX
+   ========================================== */
+let torusParticles = [];
+function initCyberTorusKnot() {
+  torusParticles = [];
+  const count = 120;
+  for (let i = 0; i < count; i++) {
+    torusParticles.push({
+      angle: Math.random() * Math.PI * 2,
+      speed: (Math.random() * 0.015 + 0.005) * (Math.random() < 0.5 ? 1 : -1),
+      radius: Math.random() * 80 + 160,
+      yOffset: (Math.random() - 0.5) * 120,
+      size: Math.random() * 1.5 + 0.8
     });
   }
 }
 
-function drawMatrixStream() {
-  ctx.font = "13px 'JetBrains Mono', monospace";
+function drawCyberTorusKnot() {
+  const cx = W / 2;
+  const cy = H / 2;
+  const mx = mouse.x > 0 ? (mouse.x - cx) * 0.0025 : 0;
+  const my = mouse.y > 0 ? (mouse.y - cy) * 0.0025 : 0;
 
-  for (let i = 0; i < matrixCols.length; i++) {
-    const col = matrixCols[i];
-    col.y += col.speed;
+  const rx = time * 0.7 + my;
+  const ry = time * 1.1 + mx;
+  const rz = time * 0.4;
 
-    if (col.y > H + 300) {
-      col.y = Math.random() * -200;
-      col.speed = Math.random() * 3 + 2;
+  const R = Math.min(W, H) * 0.18;
+  const r = Math.min(W, H) * 0.08;
+  const p = 2;
+  const q = 3;
+
+  const steps = 180;
+  const knotPoints = [];
+
+  // Generate 3D Torus Knot curve points
+  for (let i = 0; i < steps; i++) {
+    const t = (i / steps) * Math.PI * 2;
+    const u = p * t;
+    const v = q * t;
+
+    let x = (R + r * Math.cos(v)) * Math.cos(u);
+    let y = (R + r * Math.cos(v)) * Math.sin(u);
+    let z = r * Math.sin(v);
+
+    // 3D Rotations (Yaw, Pitch, Roll)
+    let x1 = x * Math.cos(ry) + z * Math.sin(ry);
+    let z1 = -x * Math.sin(ry) + z * Math.cos(ry);
+    let y2 = y * Math.cos(rx) - z1 * Math.sin(rx);
+    let z2 = y * Math.sin(rx) + z1 * Math.cos(rx);
+    let x3 = x1 * Math.cos(rz) - y2 * Math.sin(rz);
+    let y3 = x1 * Math.sin(rz) + y2 * Math.cos(rz);
+
+    const fov = 450;
+    const scale = fov / (fov + z2);
+    const px = cx + x3 * scale;
+    const py = cy + y3 * scale;
+
+    const dx = mouse.x > 0 ? mouse.x - px : 9999;
+    const dy = mouse.y > 0 ? mouse.y - py : 9999;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    knotPoints.push({ x: px, y: py, z: z2, dist: dist });
+  }
+
+  // Draw continuous 3D knot wireframe path
+  for (let i = 0; i < steps; i++) {
+    const p1 = knotPoints[i];
+    const p2 = knotPoints[(i + 1) % steps];
+
+    const avgZ = (p1.z + p2.z) * 0.5;
+    const avgDist = (p1.dist + p2.dist) * 0.5;
+    const alpha = Math.min(0.9, Math.max(0.08, 0.2 + (avgZ / (R * 2.5)) + (avgDist < 160 ? (1 - avgDist / 160) * 0.5 : 0)));
+    const lineWidth = Math.max(0.6, 1.6 + (avgZ / R));
+
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+
+    // Node highlight on every 6th step
+    if (i % 6 === 0) {
+      const nodeAlpha = Math.min(1, alpha * 1.5);
+      ctx.fillStyle = `rgba(255, 255, 255, ${nodeAlpha})`;
+      ctx.beginPath();
+      ctx.arc(p1.x, p1.y, Math.max(1, lineWidth * 1.3), 0, Math.PI * 2);
+      ctx.fill();
+
+      // Plasma connection beam to cursor
+      if (p1.dist < 170) {
+        const bAlpha = (1 - p1.dist / 170) * 0.4;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${bAlpha})`;
+        ctx.lineWidth = 0.9;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.stroke();
+      }
     }
+  }
 
-    const dx = mouse.x - col.x;
-    const isMouseNear = mouse.x > 0 && Math.abs(dx) < 120;
+  // Draw orbiting 3D dust particles around torus knot
+  for (let i = 0; i < torusParticles.length; i++) {
+    const tp = torusParticles[i];
+    tp.angle += tp.speed;
 
-    for (let j = 0; j < col.chars.length; j++) {
-      const cy = col.y - (j * 18);
-      if (cy < -20 || cy > H) continue;
+    let x = Math.cos(tp.angle) * tp.radius;
+    let y = tp.yOffset + Math.sin(tp.angle * 2) * 20;
+    let z = Math.sin(tp.angle) * tp.radius;
 
-      if (Math.random() < 0.02) {
-        col.chars[j] = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
+    let x1 = x * Math.cos(ry) + z * Math.sin(ry);
+    let z1 = -x * Math.sin(ry) + z * Math.cos(ry);
+    let y2 = y * Math.cos(rx) - z1 * Math.sin(rx);
+    let z2 = y * Math.sin(rx) + z1 * Math.cos(rx);
+
+    const fov = 450;
+    const scale = fov / (fov + z2);
+    const px = cx + x1 * scale;
+    const py = cy + y2 * scale;
+
+    const pAlpha = Math.min(0.85, Math.max(0.1, 0.25 + z2 / 300));
+    ctx.fillStyle = `rgba(255, 255, 255, ${pAlpha})`;
+    ctx.beginPath();
+    ctx.arc(px, py, tp.size * scale, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* ==========================================
+   ANIMATION 9: MOLECULAR ATOM NETWORK
+   ========================================== */
+let atoms = [];
+function initMolecularAtoms() {
+  atoms = [];
+  const count = 45;
+  for (let i = 0; i < count; i++) {
+    atoms.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 1.2,
+      vy: (Math.random() - 0.5) * 1.2,
+      orbitR: Math.random() * 25 + 15,
+      angle: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawMolecularAtoms() {
+  for (let i = 0; i < atoms.length; i++) {
+    const a = atoms[i];
+    a.x += a.vx; a.y += a.vy;
+    a.angle += 0.03;
+
+    if (a.x < 0 || a.x > W) a.vx *= -1;
+    if (a.y < 0 || a.y > H) a.vy *= -1;
+
+    const electronX = a.x + Math.cos(a.angle) * a.orbitR;
+    const electronY = a.y + Math.sin(a.angle) * (a.orbitR * 0.5);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.beginPath(); ctx.arc(a.x, a.y, 2.5, 0, Math.PI * 2); ctx.fill();
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.beginPath(); ctx.arc(a.x, a.y, a.orbitR, 0, Math.PI * 2); ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.beginPath(); ctx.arc(electronX, electronY, 1.8, 0, Math.PI * 2); ctx.fill();
+
+    if (mouse.x > 0) {
+      const dist = Math.sqrt((mouse.x - a.x) ** 2 + (mouse.y - a.y) ** 2);
+      if (dist < 140) {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - dist / 140) * 0.3})`;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
       }
+    }
+  }
+}
 
-      const dy = mouse.y - cy;
+/* ==========================================
+   ANIMATION 10: GRAVITATIONAL LENS GRID
+   ========================================== */
+function drawGravitationalLensGrid() {
+  const cx = W / 2;
+  const cy = H / 2;
+  const spacing = 32;
+
+  const mx = mouse.x > 0 ? mouse.x : cx;
+  const my = mouse.y > 0 ? mouse.y : cy;
+
+  for (let x = spacing; x < W; x += spacing) {
+    for (let y = spacing; y < H; y += spacing) {
+      const dx = x - mx;
+      const dy = y - my;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      const isLead = j === 0;
 
-      let alpha = isLead ? 0.8 : (1 - j / col.chars.length) * 0.25;
-      if (isMouseNear && dist < 140) {
-        alpha = Math.min(1, alpha + (1 - dist / 140) * 0.6);
-        ctx.fillStyle = isLead ? `#ffffff` : `rgba(255, 255, 255, ${alpha})`;
-      } else {
-        ctx.fillStyle = `rgba(200, 200, 200, ${alpha})`;
+      const maxDist = 220;
+      let px = x;
+      let py = y;
+
+      if (dist < maxDist) {
+        const pull = (1 - dist / maxDist) * 35;
+        const angle = Math.atan2(dy, dx);
+        px += Math.cos(angle) * pull;
+        py += Math.sin(angle) * pull;
       }
 
-      ctx.fillText(col.chars[j], col.x, cy);
+      const alpha = 0.08 + (dist < maxDist ? (1 - dist / maxDist) * 0.4 : 0);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillRect(px - 1, py - 1, 2, 2);
     }
   }
 }
@@ -350,8 +947,11 @@ function drawMatrixStream() {
    INITIALIZER & CONTROLLER
    ========================================== */
 function initCurrentAnimation() {
+  if (currentAnimIndex === 0) initCyberWaveMatrix();
   if (currentAnimIndex === 1) initWarpStarfield();
-  if (currentAnimIndex === 3) initMatrixStream();
+  if (currentAnimIndex === 3) initVortexRingSwarm();
+  if (currentAnimIndex === 7) initCyberTorusKnot();
+  if (currentAnimIndex === 8) initMolecularAtoms();
 }
 
 function nextAnimation() {
@@ -371,16 +971,106 @@ function render() {
   ctx.fillRect(0, 0, W, H);
 
   switch(currentAnimIndex) {
-    case 0: drawMatrixWave(); break;
+    case 0: drawCyberWaveMatrix(); break;
     case 1: drawWarpStarfield(); break;
     case 2: drawCyberWireframeGrid(); break;
-    case 3: drawMatrixStream(); break;
+    case 3: drawVortexRingSwarm(); break;
+    case 4: drawTunnelSpeedway(); break;
+    case 5: drawQuantumRadarGrid(); break;
+    case 6: drawHyperCubeRotation(); break;
+    case 7: drawCyberTorusKnot(); break;
+    case 8: drawMolecularAtoms(); break;
+    case 9: drawGravitationalLensGrid(); break;
   }
 
   requestAnimationFrame(render);
 }
 
 render();
+
+/* ==========================================
+   OFFICIAL SPOTIFY PLAYER CONTROLLER
+   ========================================== */
+const spotifyTracks = [
+  { name: "1/4: Gigi Perez - Sailor Song", id: "21IYMdzTrzSe191Cy5eMap" },
+  { name: "2/4: pupsies - Misery.", id: "6De8sirPzVyAoBDlQpcutY" },
+  { name: "3/4: Cuntsniffer - Meant to Be", id: "1WoRPBYYIU54HFsh68C65H" },
+  { name: "4/4: ABBA - The Winner Takes It All", id: "2LCOlwwe5SErpR1yzLglk6" }
+];
+
+let activeSongIdx = 0;
+
+function loadActiveSong() {
+  const track = spotifyTracks[activeSongIdx];
+  document.getElementById('media-track-badge').textContent = track.name;
+  const iframe = document.getElementById('main-media-iframe');
+  iframe.src = `https://open.spotify.com/embed/track/${track.id}?utm_source=generator&theme=0`;
+}
+
+function nextSong() {
+  activeSongIdx = (activeSongIdx + 1) % spotifyTracks.length;
+  loadActiveSong();
+}
+
+function prevSong() {
+  activeSongIdx = (activeSongIdx - 1 + spotifyTracks.length) % spotifyTracks.length;
+  loadActiveSong();
+}
+
+function promptCustomSpotifyUrl() {
+  const url = prompt("Paste Spotify Track, Album, or Playlist URL:");
+  if (url) {
+    let match = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    if (match) {
+      document.getElementById('media-track-badge').textContent = "Custom Spotify Track";
+      document.getElementById('main-media-iframe').src = `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
+    } else {
+      alert("Please paste a valid Spotify link!");
+    }
+  }
+}
+
+function copyVisibleLink() {
+  const url = "https://luaprot.net/ad/04358f4d";
+  const card = document.getElementById('link-card');
+  const text = document.getElementById('url-text');
+  const icon = document.getElementById('copy-icon');
+
+  const onSuccess = () => {
+    card.classList.add('copied');
+    const originalText = text.textContent;
+    text.textContent = 'COPIED TO CLIPBOARD!';
+    icon.className = 'fa-solid fa-check';
+    icon.style.color = '#ffffff';
+
+    setTimeout(() => {
+      card.classList.remove('copied');
+      text.textContent = originalText;
+      icon.className = 'fa-regular fa-copy';
+      icon.style.color = '';
+    }, 2000);
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(onSuccess).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      onSuccess();
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    onSuccess();
+  }
+}
 </script>
 </body>
 </html>
